@@ -4,7 +4,7 @@ import User from "../models/User";
 
 export const home = async (req, res) => {
   try {
-    const popularSongs = await Song.find().sort({ views: "desc" }).limit(20);
+    const popularSongs = await Song.find().sort({ views: "desc" }).limit(10);
     
     if (popularSongs.length === 0) {
       const newPopularSongs = await getPopularSongs();

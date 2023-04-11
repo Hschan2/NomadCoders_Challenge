@@ -1,34 +1,23 @@
-import { google } from "googleapis";
 import Song from "../models/Song";
 
-const youtube = google.youtube({
-  version: "v3",
-  auth: process.env.YOUTUBE_API_KEY,
-});
+const API_KEY = process.env.LAST_FM_API_KEY
+const SECRET_KEY = process.env.LAST_FM_SECRET_KEY
+const API_URL = `https://ws.audioscrobbler.com/2.0/?method=track.search&track=Believe&api_key=${API_KEY}&format=json&method=chart.gettoptracks&limit=10`;
 
 export const getPopularSongs = async () => {
-    const response = await youtube.videos.list({
-        chart: "mostPopular",
-        part: ["snippet", "statistics"],
-        maxResults: 20,
-        videoCategoryId: 10,
-        regionCode: "KR",
-    });
+    const response = await fetch(API_URL)
+    const data = await response.json()
+    const tracks = data.tracks.track
 
-    const videos = response.data.items;
-    const popularSongs = [];
-
-    for (let i = 0; i < videos.length; i++) {
-        const video = videos[i];
-        const popularSong = new Song({
-        title: video.snippet.title,
-        artist: video.snippet.channelTitle,
-        videoId: video.id,
-        views: video.statistics.viewCount,
-        });
-
-        popularSongs.push(popularSong);
-    }
+    const popularSongs = tracks.map(track => {
+        return new Song({
+            title: track.name,
+            artist: track.artist,
+            audio: track.url,
+            views: track.listeners,
+            imageUrl: track.image[3]['#text'],
+        })
+    })
 
     return popularSongs;
 };
@@ -39,9 +28,9 @@ export const savePopularSongs = async () => {
     for (let i = 0; i < popularSongs.length; i++) {
         const popularSong = popularSongs[i];
         try {
-        await popularSong.save();
+            await popularSong.save();
         } catch (error) {
-        console.log(error);
+            console.log(error);
         }
     }
 };
