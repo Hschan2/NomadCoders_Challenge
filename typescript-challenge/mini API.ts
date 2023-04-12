@@ -33,9 +33,12 @@ Documentation: https://developer.mozilla.org/en-US/docs/Web/API/Geolocation
 */
 
 // 내가 작성한 코드
+// LocalStorageAPI 인터페이스
 interface LocalStorageAPI<T> {
     [key: string]: T
 }
+
+// GeolocationAPI 인터페이스
 interface GeolocationAPI {
     coords: {
         lat: number
@@ -48,23 +51,30 @@ interface GeolocationOptionAPI {
     maximumAge?: number
 }
 
+// Geolocation 파라미터 처리 타입화
+type Position = (position: GeolocationAPI) => void
 type GeolocationError = {
     code: number
     message: string
 }
+type ErrorFn = (error: GeolocationError) => void
 
+// LocalStorage 추상화 클래스
 abstract class MiniLocalStorage<T> {
     abstract setItem(key: string, value: T): void
     abstract getItem(key: string): T | null
     abstract clearItem(key: string): void
     abstract clear(): void
 }
+
+// Geolocation 추상화 클래스
 abstract class MiniGeolocation {
-    abstract getCurrentPosition(successFn: (position: GeolocationAPI) => void, errorFn?: (error: GeolocationError) => void, optionsObj?: GeolocationOptionAPI): void
-    abstract watchPosition(success: (position: GeolocationAPI) => void, error?: (error: GeolocationError) => void, options?: GeolocationOptionAPI): number
+    abstract getCurrentPosition(successFn: Position, errorFn?: ErrorFn, optionsObj?: GeolocationOptionAPI): void
+    abstract watchPosition(success: Position, error?: ErrorFn, options?: GeolocationOptionAPI): number
     abstract clearWatch(id: number): void
 }
 
+// LocalStorage 클래스
 class LocalStorage<T> extends MiniLocalStorage<T> {
     private storage: LocalStorageAPI<T> = {}
 
@@ -81,10 +91,12 @@ class LocalStorage<T> extends MiniLocalStorage<T> {
         this.storage = {}
     } 
 }
+
+// Geolocation 클래스
 class GeolocationClass extends MiniGeolocation {
     private id: number = 0
 
-    getCurrentPosition(successFn: (position: GeolocationAPI) => void, errorFn?: (error: GeolocationError) => void, optionsObj?: GeolocationOptionAPI): void {
+    getCurrentPosition(successFn: Position, errorFn?: ErrorFn, optionsObj?: GeolocationOptionAPI): void {
         navigator.geolocation.getCurrentPosition((position: GeolocationPosition) => {
             successFn({
                 coords: {
@@ -97,7 +109,7 @@ class GeolocationClass extends MiniGeolocation {
         optionsObj
         )
     }
-    watchPosition(success: (position: GeolocationAPI) => void, error?: (error: GeolocationError) => void, options?: GeolocationOptionAPI): number {
+    watchPosition(success: Position, error?: ErrorFn, options?: GeolocationOptionAPI): number {
         this.id = navigator.geolocation.watchPosition((position: GeolocationPosition) => {
             success({
                 coords: {
@@ -116,9 +128,29 @@ class GeolocationClass extends MiniGeolocation {
     }
 }
 
+// LocalStorage 호출 예시
 const stringStorage = new LocalStorage<string>()
 
 stringStorage.setItem("cat", "ya")
 console.log(stringStorage.getItem("cat"))
 stringStorage.clearItem("cat")
 stringStorage.clear()
+
+// Geolocation 호출 예시
+const geolocation = new Geolocation();
+
+geolocation.getCurrentPosition((position) => {
+  console.log(`Current Position: ${position.coords.latitude}, ${position.coords.longitude}`);
+}, (error) => {
+  console.error(`Error occurred: ${error.message}`);
+}, { enableHighAccuracy: true });
+
+const watchId = geolocation.watchPosition((position) => {
+  console.log(`Watched Position: ${position.coords.latitude}, ${position.coords.longitude}`);
+}, (error) => {
+  console.error(`Error occurred: ${error.message}`);
+}, { maximumAge: 5000 });
+
+setTimeout(() => {
+  geolocation.clearWatch(watchId);
+}, 10000);
