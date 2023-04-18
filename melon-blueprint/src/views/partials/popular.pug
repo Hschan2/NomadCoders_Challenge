@@ -1,59 +1,20 @@
-article.screen
-  input#magicButton(type="checkbox" value="None" name="check")
-  label.main.fa.fa-list(for="magicButton")
-  div.coverImage(style=`background: url('${popularSongs[0].imageUrl}')`)
-  div.search.fa.fa-search
-  div.bodyPlayer
-  table.list
-    each song, index in popularSongs
-      tr.song
-        td.nr
-          h5=index+1
-        td.title
-          h6=song.title
-        td.length 
-          h5=song.duration
-        td
-          label
-            input#heart(type="checkbox")
-            span.zmr.fa.fa-heart
-  div.shadow
-  div.bar
-  div.info
-    h4=popularSongs[0].title
-    h3=popularSongs[0].artist
-  audio#audio(preload="auto" controls) 
-    source(src=popularSongs[0].audio)
-    source(src=popularSongs[0].audio)
-  table.player 
-    td
-      label
-        input#backward(type="checkbox")
-        span.backward.fa.fa-backward
-    td
-      label
-        input#play(type="checkbox" title="Play")
-        span.play.fa.fa-play
-    td
-      label
-        input#forward(type="checkbox")
-        span.forward.fa.fa-forward
-  table.footer
-    td
-      label
-        input#love(type="checkbox" checked)
-        span.love.fa.fa-heart
-    td
-      label
-        input#shuffle(type="checkbox")
-        span.shuffle.fa.fa-shuffle
-    td
-      label
-        input#repeat(type="checkbox" checked)
-        span.repeat.fa.fa-repeat
-    td
-      label
-        input#options(type="checkbox")
-        span.options.fa.fa-option
-  div.current
-    h2=popularSongs[0].title
+if userData
+  article.screen
+    div.navContainer
+      nav.navbar
+        div(onclick="location.href='/';") Home
+        div#logout(onclick="logout()") 로그아웃
+else
+  div.navContainer
+    nav.navbar
+      div(onclick="location.href='/login';") 로그인
+div 
+  h1 PlayList
+each song, index in popularSongs
+  div.list
+    div.chart()=song.title
+    if userData
+      div.myList 삭제
+  div 
+    dialog#myDialog(onclick="dialogClick(e)")
+      iframe(src="", frameborder="0" id="player" type="text/html" width="640" height="360") 
