@@ -2,12 +2,12 @@ if userData
   article.screen
     div.navContainer
       nav.navbar
-        div(onclick="location.href='/';") Home
-        div#logout(onclick="logout()") 로그아웃
+        div.button(onclick="window.location.href='/'") Home
+        div#logout.button(onclick="logout()") 로그아웃
 else
   div.navContainer
     nav.navbar
-      div(onclick="location.href='/login';") 로그인
+      div.button(onclick="window.location.href='/login'") 로그인
 div 
   h1 PlayList
 each song, index in popularSongs
