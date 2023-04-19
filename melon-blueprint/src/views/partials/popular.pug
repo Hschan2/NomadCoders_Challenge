@@ -12,7 +12,7 @@ div
   h1 PlayList
 each song, index in popularSongs
   div.list
-    div.chart()=song.title
+    div.chart(onclick="listen('#{song.id}')")=song.title
     if userData
       div.myList 삭제
   div 

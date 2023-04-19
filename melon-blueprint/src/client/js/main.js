@@ -22,10 +22,12 @@ function logout() {
 
 let isListening = false;
 
-function listen(id, song) {
+function listen(songId) {
    if (!isListening) {
       isListening = true;
-      const data = { id: song };
+      event.preventDefault();
+      const data = { id: songId };
+      
       fetch("listen", {
          method: "POST",
          headers: {
@@ -34,7 +36,7 @@ function listen(id, song) {
          body: JSON.stringify(data)
       }).then(res => console.log(`${res.status} 듣기 성공`)).catch(error => console.log(`${error} 에러`));
 
-      player.src = `https://www.youtube.com/embed/${song}?autoplay=1&origin=http://example.com`;
+      player.src = `https://www.youtube.com/embed/${songId}?autoplay=1&origin=http://example.com`;
       myDialog.showModal();
       isListening = false;
    }
@@ -47,4 +49,3 @@ function dialogClick(event) {
       window.location.reload();
    }
 }
-
