@@ -72,3 +72,28 @@ playButton.addEventListener("click", () => {
     winLost.style.fontWeight = "bold";
   }
 });
+
+
+// NomadCoder Solution Code
+const guessForm = document.getElementById("js-guess");
+const results = document.getElementById("js-result");
+const maxNumber = document.getElementById("maxNumber");
+
+function handleGuessSubmit(e) {
+  e.preventDefault();
+  const guessInput = guessForm.querySelector("input");
+  if (guessInput.value === "" && maxNumber === "") {
+    return;
+  }
+  const max = maxNumber.value;
+  const random = Math.ceil(Math.random() * max);
+  const userGuess = parseInt(guessInput.value, 10);
+  const resultSpan = results.querySelector("span");
+  resultSpan.innerHTML = `
+  You chose: ${userGuess},
+  the machine chose: ${random}.<br />
+  <strong>${userGuess === random ? "You won!" : "You lost!"}</strong>
+  `;
+}
+
+guessForm.addEventListener("submit", handleGuessSubmit);
