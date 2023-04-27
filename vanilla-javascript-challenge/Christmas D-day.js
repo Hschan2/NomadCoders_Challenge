@@ -4,12 +4,12 @@
 
 // 내가 작성한 코드
 const clockTitle = document.querySelector(".js-clock");
+const D_day = document.querySelector(".d_day");
 const christmasDay = new Date("December 25, 2023 00:00:00").getTime();
 
 setInterval(() => {
   const todayNow = new Date().getTime();
   const remindDate = christmasDay - todayNow;
-
   const days = Math.floor(remindDate / (1000 * 60 * 60 * 24));
   const hours = Math.floor(
     (remindDate % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
@@ -17,8 +17,14 @@ setInterval(() => {
   const minutes = Math.floor((remindDate % (1000 * 60 * 60)) / (1000 * 60));
   const seconds = Math.floor((remindDate % (1000 * 60)) / 1000);
 
-  clockTitle.innerHTML = `${days}d ${hours}h ${minutes}m ${seconds}s`;
+  const hour = `${hours < 10 ? `0${hours}` : hours}`;
+  const minute = `${minutes < 10 ? `0${minutes}` : minutes}`;
+  const second = `${seconds < 10 ? `0${seconds}` : seconds}`;
+
+  D_day.innerHTML = `D-${days}`;
+  clockTitle.innerHTML = `${days}day ${hour}hours ${minute}minutes ${second}seconds`;
 }, 1000);
+
 
 // NomadCoder Solution Code
 const clockTitle2 = document.querySelector(".js-clock");
